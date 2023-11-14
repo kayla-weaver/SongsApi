@@ -10,18 +10,19 @@ namespace Songs.Controllers
   {
     private readonly SongContext _db;
 
-    public AnimalsController(SongContext db)
+    public SongsController(SongContext db)
     {
       _db = db;
     }
-[HttpGet]
+
+    [HttpGet]
     public async Task<List<Song>> Get(string artist, string name, int year)
     {
       IQueryable<Song> query = _db.Songs.AsQueryable();
 
-      if (species != null)
+      if (artist != null)
       {
-        query = query.Where(entry => entry.Species == species);
+        query = query.Where(entry => entry.Artist == artist);
       }
 
       if (name != null)
@@ -29,9 +30,9 @@ namespace Songs.Controllers
         query = query.Where(entry => entry.Name == name);
       }
 
-      if (Year > 0)
+      if (year > 0)
       {
-        query = query.Where(entry => entry.Age >= minimumAge);
+        query = query.Where(entry => entry.Year == year);
       }
 
       return await query.ToListAsync();
