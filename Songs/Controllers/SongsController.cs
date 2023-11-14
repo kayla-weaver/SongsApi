@@ -1,37 +1,40 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Songs.Models;
 
-namespace Songs.Controllers;
-
-public class SongsController : ControllerBase
+namespace Songs.Controllers
 {
+  [Route("api/[controller]")]
+  [ApiController]
+  public class SongsController : ControllerBase
+  {
     private readonly SongContext _db;
 
-    public SongsController(SongContext db)
+    public AnimalsController(SongContext db)
     {
-        _db = db;
+      _db = db;
     }
-
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Song>>> Get()
+[HttpGet]
+    public async Task<List<Song>> Get(string artist, string name, int year)
     {
-        return await _db.Songs.ToListAsync();
+      IQueryable<Song> query = _db.Songs.AsQueryable();
+
+      if (species != null)
+      {
+        query = query.Where(entry => entry.Species == species);
+      }
+
+      if (name != null)
+      {
+        query = query.Where(entry => entry.Name == name);
+      }
+
+      if (Year > 0)
+      {
+        query = query.Where(entry => entry.Age >= minimumAge);
+      }
+
+      return await query.ToListAsync();
     }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Song>> GetSong(int id)
-    {
-        Song song = await _db.Songs.FindAsync(id);
-
-        if (song == null)
-        {
-            return NotFound();
-        }
-
-        return song;
-    }
-
-
-}
+  }
+};
